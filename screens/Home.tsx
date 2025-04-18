@@ -2,13 +2,13 @@ import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
-import { MainStackScreenList } from "../stacks/MainStack";
+import { MainStackScreenList, NaviProps } from "../stacks/MainStack";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export default function Home() {
   // 0. Initialized
   // Hook: navigation 기능을 사용하기 위한 Hook 불러오기
-  const navi = useNavigation<NativeStackNavigationProp<MainStackScreenList>>();
+  const navi = useNavigation<NaviProps>();
 
   // A. Logic Process
   const goToPage = () => {

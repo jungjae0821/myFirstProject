@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -16,6 +16,13 @@ import {
 import { styled } from "styled-components";
 import LoadingScreen from "./LoadingScreen";
 import * as MediaLibrary from "expo-media-library";
+import { FontAwesome } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import {
+  NativeStackNavigationProp,
+  NativeStackNavigatorProps,
+} from "@react-navigation/native-stack";
+import { NaviProps } from "../stacks/MainStack";
 
 const Container = styled(View)`
   flex: 1;
@@ -52,6 +59,8 @@ const InnerCircle = styled(View)`
   border-radius: 50%;
   margin: 5px;
   right: 0px;
+  justify-content: center;
+  align-items: center;
 `;
 const SelectIcon = styled(Image)`
   width: 100%;
@@ -62,6 +71,14 @@ const AlbumMenuTitle = styled(Text)`
   font-size: 25px;
   color: black;
   margin: 15px 20px;
+`;
+
+const NextHeaderBtn = styled(TouchableOpacity)`
+  padding: 5px 15px;
+`;
+const NextHeaderTitle = styled(Text)`
+  font-size: 18px;
+  color: dodgerblue;
 `;
 // 한 줄에 띄울 갤러리 사진 수
 const numColumns = 3;
@@ -76,6 +93,8 @@ export default () => {
   const [selectedPhotos, setSelectedPhotos] = useState<DummyDataType[]>([]);
   // Hook: 스마트폰 화면의 넓이를 가져오는 기능
   const { width: WIDTH } = useWindowDimensions();
+  // Hook: 페이지 이동을 위한 Navigation Hook
+  const navi = useNavigation<NaviProps>();
 
   // 갤러리 사진 사이즈 (FlatList)
   const itemSize = WIDTH / numColumns;
@@ -153,6 +172,27 @@ export default () => {
     }, 500);
   }, []);
 
+  // Header의 Style을 변경하기 위해 사용하는 Hook
+  useLayoutEffect(() => {
+    // 페이지 이동을 위한 함수 + 데이터 전달
+    // 문제발생: 페이지 생성 시 비어있는 selectedPhotos를 1번 집어넣고 끝나기 때문에 나중에 사진을 선택하더라도 goTo-SelectedPhotos 값이 갱신되지 않음
+    // 따라서 의존성 배열인 [selectedPhotos]를 넣어서 selectedPhotos 안의 값이 사진을 선택할때마다 useEffect가 새로 실행되어 갱신되도록 코드를 수정함
+    const goTo = () => {
+      navi.navigate("UploadPost", {
+        assets: selectedPhotos,
+      });
+    };
+
+    // navigationHook을 사용해 Header 접근
+    navi.setOptions({
+      headerRight: () => (
+        <NextHeaderBtn onPress={goTo}>
+          <NextHeaderTitle>Next</NextHeaderTitle>
+        </NextHeaderBtn>
+      ),
+    });
+  }, [selectedPhotos]);
+
   // Page UI Rendering
   return loading ? (
     <LoadingScreen />
@@ -201,7 +241,7 @@ export default () => {
               <PhotoImg source={{ uri: item.uri }} />
               {isSelect(item) && (
                 <InnerCircle>
-                  <SelectIcon />
+                  <FontAwesome name="check" size={24} color={"black"} />
                 </InnerCircle>
               )}
             </PhotoBtn>
@@ -220,7 +260,7 @@ const styles = StyleSheet.create({
 });
 
 // 더미데이터의 타입만들기 -1
-type DummyDataType = {
+export type DummyDataType = {
   id: string;
   uri: string;
 };
