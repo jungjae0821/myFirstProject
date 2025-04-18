@@ -178,6 +178,13 @@ export default () => {
     // 문제발생: 페이지 생성 시 비어있는 selectedPhotos를 1번 집어넣고 끝나기 때문에 나중에 사진을 선택하더라도 goTo-SelectedPhotos 값이 갱신되지 않음
     // 따라서 의존성 배열인 [selectedPhotos]를 넣어서 selectedPhotos 안의 값이 사진을 선택할때마다 useEffect가 새로 실행되어 갱신되도록 코드를 수정함
     const goTo = () => {
+      // 선택한 사진이 없으면 이동하지 않고 알림
+      if (selectedPhotos.length < 1) {
+        Alert.alert("알림", "선택한 사진이 없습니다. 사진을 선택해주세요.");
+        return;
+      }
+
+      // 페이지 이동
       navi.navigate("UploadPost", {
         assets: selectedPhotos,
       });

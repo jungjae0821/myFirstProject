@@ -48,6 +48,7 @@ export default ({
     <Container>
       <Title>Upload Post Page</Title>
       <UploadBox>
+        {/*선택한 사진 보여주는 영역 */}
         <PhotoBox>
           <Photo source={{ uri: assets[0].uri }} />
           <PhotoBlack />
@@ -55,9 +56,10 @@ export default ({
             style={{ position: "absolute", right: 0, margin: 7 }}
             name="switcher"
             size={25}
-            color={"black"}
+            color={"white"}
           />
         </PhotoBox>
+        {/*글 작성하는 영역 */}
         <Caption>
           <Input />
         </Caption>
