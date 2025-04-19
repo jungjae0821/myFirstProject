@@ -37,6 +37,7 @@ const PhotoBtn = styled(TouchableOpacity)`
   width: 100px;
   height: 100px;
 `;
+// My Gallery Photo Image
 const PhotoImg = styled(Image)`
   width: 100%;
   height: 100%;
@@ -46,6 +47,7 @@ const SelectedPhoto = styled(View)`
   width: 200px;
   height: 200px;
 `;
+// Selected Photo Image
 const SelectedPhotoImg = styled(Image)`
   width: 100%;
   height: 100%;
@@ -62,20 +64,23 @@ const InnerCircle = styled(View)`
   justify-content: center;
   align-items: center;
 `;
+// Select Icon Image
 const SelectIcon = styled(Image)`
   width: 100%;
   height: 100%;
 `;
+// Header Title
 const AlbumMenuTitle = styled(Text)`
   font-weight: 600;
   font-size: 25px;
   color: black;
   margin: 15px 20px;
 `;
-
+// Header Next Button
 const NextHeaderBtn = styled(TouchableOpacity)`
   padding: 5px 15px;
 `;
+// Header Next Button Text
 const NextHeaderTitle = styled(Text)`
   font-size: 18px;
   color: dodgerblue;
@@ -166,7 +171,7 @@ export default () => {
 
   // 현재 페이지 접속 시 1번 실행되는 Hook
   useEffect(() => {
-    // 3초 후에 getMyPhotos 실행
+    // 0.5초 후에 getMyPhotos 실행
     setTimeout(() => {
       getMyPhotos();
     }, 500);
