@@ -27,6 +27,7 @@ import { NaviProps } from "../stacks/MainStack";
 const Container = styled(View)`
   flex: 1;
 `;
+// Header Title
 const PageTitle = styled(Text)`
   font-size: 60px;
   text-align: center;
