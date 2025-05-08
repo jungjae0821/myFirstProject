@@ -23,6 +23,7 @@ import {
   NativeStackNavigatorProps,
 } from "@react-navigation/native-stack";
 import { NaviProps } from "../stacks/MainStack";
+import HeaderBtn from "../components/HeaderBtn";
 
 const Container = styled(View)`
   flex: 1;
@@ -191,6 +192,7 @@ export default () => {
       }
 
       // 페이지 이동
+      // navigation(param1(이동할 스크린 이름), param2(전달할 데이터))
       navi.navigate("UploadPost", {
         assets: selectedPhotos,
       });
@@ -198,11 +200,7 @@ export default () => {
 
     // navigationHook을 사용해 Header 접근
     navi.setOptions({
-      headerRight: () => (
-        <NextHeaderBtn onPress={goTo}>
-          <NextHeaderTitle>Next</NextHeaderTitle>
-        </NextHeaderBtn>
-      ),
+      headerRight: () => <HeaderBtn title="Next" onPress={goTo} />,
     });
   }, [selectedPhotos]);
 
