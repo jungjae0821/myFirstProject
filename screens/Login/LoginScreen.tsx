@@ -95,6 +95,7 @@ export default () => {
     try {
       // User ID/PW/Auth 정보를 통해 Firebase Auth에 로그인 요청
       const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log(result);
     } catch (error) {
       if (error instanceof FirebaseError) {
         Alert.alert(error.code);
