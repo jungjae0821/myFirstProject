@@ -16,6 +16,7 @@ import {
 import styled from "styled-components";
 import { auth } from "../../firebaseConfig";
 import { FirebaseError } from "firebase/app";
+import { useNavigation } from "@react-navigation/native";
 
 const ImgContainer = styled(ImageBackground)`
   flex: 1;
@@ -77,6 +78,7 @@ export default () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const navi = useNavigation();
 
   // Email, PW Input Text 문자 state에 할당
   const onChangeText = (text: string, type: "email" | "password" | "name") => {
@@ -133,8 +135,10 @@ export default () => {
     }
     // 3. Error & Loading
   };
-  // CreateAccount 버튼 클릭시 회원가입 페이지로 이동
-  const goTo = () => {};
+  // 뒤로가기 버튼 클릭시 로그인 (이전)페이지로 이동
+  const goBack = () => {
+    navi.goBack();
+  };
 
   return (
     <ImgContainer
@@ -181,7 +185,7 @@ export default () => {
               {loading ? "Loading..." : "Create Account"}
             </SignupBtnTitle>
           </SignupBtn>
-          <SignupBtn style={{ backgroundColor: "#b5daff" }}>
+          <SignupBtn onPress={goBack} style={{ backgroundColor: "#b5daff" }}>
             <SignupBtnTitle>Go Back</SignupBtnTitle>
           </SignupBtn>
         </View>
