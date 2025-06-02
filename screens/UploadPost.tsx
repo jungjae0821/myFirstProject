@@ -13,6 +13,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import HeaderBtn from "../components/HeaderBtn";
+import { auth, firestore, storage } from "../firebaseConfig";
+import { addDoc, collection, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, StorageReference } from "firebase/storage";
 
 const Container = styled(View)`
   background-color: black;
@@ -84,7 +87,7 @@ export default ({
   };
 
   // 사진, 글을 업로드하기 위한 함수
-  const onUpload = () => {
+  const onUpload = async () => {
     // [방어코드]: text 작성 안한 경우 작성하도록 알람
     if (caption === "" || caption.length < 10) {
       Alert.alert("엄로드 오류", "글을 작성한 경우에만 업로드 가능합니다.");
@@ -97,12 +100,45 @@ export default ({
     setLoading(true);
     try {
       // 2. 서버에 데이터 업로드
-      // caption: 내가 쓴글
-      // assets: 내가 선택한 사진들
+      // 업로드할 데이터 (asset[사진], captions 등)
+      const uploadData = {
+        caption: caption,
+        userId: auth.currentUser?.uid,
+        createdAt: Date.now(),
+        nickname: auth.currentUser?.displayName,
+      };
+      // 업로드할 DB의 경로
+      const path = collection(firestore, "posts");
+      // Firebase DB(Firestore)의 해당경로에 업로드
+      const doc = await addDoc(path, uploadData);
+      // 2-1. Firebase Storage에 이미지를 URL형식으로 변환 (convert)해서 업로드
+      // - 여러 사진들을 업로드할 배열 생성
+      const photoURLs = [];
+      // - 여러 사진들을 반복해서 서버에 업로드하고 배열에 넣음
+      for (const asset of assets) {
+        //   ㄴ 여러 사진들을 서버 (Storage)에 업로드
+        // - path
+        const path = `posts/${auth.currentUser?.uid}}/${doc.id}/${asset.id}.png`;
+        const locationRef = ref(storage, path);
+        // - blob 형태 추가 변환
+        const blob = await assetToBlob(asset.uri);
+        // - 서버 업로드
+        const result = await uploadBytesResumable(locationRef, blob);
+        //   ㄴ 서버에 업로드한 사진을 URL로 변환
+        const url = await getDownloadURL(result.ref);
+        //   ㄴ URL로 변환된 사진을을 배열에 추가
+        photoURLs.push(url);
+      }
+      await updateDoc(doc, {
+        photos: photoURLs,
+      });
       // 3. 서버에 업로드 완료시 Loading 종료
       // Exception (예외): 업로드 실패시 -- error
+      setLoading(false);
     } catch (error) {
+      Alert.alert("Error", "${error}");
       // 에러 발생 시에도 Loading 종료
+      setLoading(false);
     }
   };
 
@@ -158,3 +194,12 @@ export default ({
     </Container>
   );
 };
+function assetToBlob(uri: string): Promise<Blob> {
+  return fetch(uri).then((response) => response.blob());
+}
+import { uploadBytes } from "firebase/storage";
+
+async function uploadBytesResumable(locationRef: StorageReference, blob: Blob) {
+  // Use Firebase's uploadBytes to upload the blob and return the result
+  return await uploadBytes(locationRef, blob);
+}
