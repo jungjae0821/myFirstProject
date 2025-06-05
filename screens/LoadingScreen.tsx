@@ -7,6 +7,7 @@ const Container = styled(View)`
   justify-content: center;
   align-items: center;
 `;
+
 export default () => {
   return (
     <Container>
