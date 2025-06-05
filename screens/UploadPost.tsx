@@ -132,13 +132,16 @@ export default ({
       await updateDoc(doc, {
         photos: photoURLs,
       });
-
-      // 3. Server 에 업로드 완료시 Loading 종료
-      setLoading(false);
+      // 4. 홈화면(메인화면)으로 이동
+      if (navi.canGoBack()) {
+        navi.goBack();
+        navi.goBack();
+      }
     } catch (error) {
       // Exception(예외) : 업로드 실패 시 -- Error
       Alert.alert("Error", `${error}`);
-      // 에러 발생 시에도 Loading 종료
+    } finally {
+      // 정상동작해도 에러발생해도 Loading 종료
       setLoading(false);
     }
   };

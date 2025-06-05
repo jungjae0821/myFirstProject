@@ -1,7 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+} from "react-native";
 import { NaviProps } from "../stacks/MainStack";
 import { auth } from "../firebaseConfig";
+import styled from "styled-components/native";
+import Timeline from "../components/Timeline";
+
+const Logo = styled(Image)`
+  width: 200px;
+  height: 50px;
+`;
+const ScrollContainer = styled(ScrollView)`
+  flex: 1;
+`;
 
 export default function Home() {
   // 0.Initialized
@@ -14,19 +31,17 @@ export default function Home() {
     navi.navigate("CreatePost");
   };
 
-  const signOut = async () => {
-    await auth.signOut();
-  };
-
   // B.Page UI Rendering
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text>InstaDaelim</Text>
+        <Logo source={require("../assets/resources/instaDaelim_title.png")} />
         <Button onPress={goToPage} title={"CREATE"}></Button>
       </View>
-      {/* 테스트용 로그아웃버튼 */}
-      <Button title="Log out" onPress={signOut} />
+      {/* 서버에 저장된 데이터 타임라인 순으로 정렬 */}
+      <ScrollView>
+        <Timeline />
+      </ScrollView>
     </View>
   );
 }
@@ -38,11 +53,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   header: {
-    backgroundColor: "tomato",
     height: 80,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 15,
+    marginTop: 10,
   },
 });
